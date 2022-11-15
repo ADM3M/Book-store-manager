@@ -1,4 +1,4 @@
-﻿namespace Jul.Data
+﻿namespace Jul.Entities
 {
     public class Books
     {

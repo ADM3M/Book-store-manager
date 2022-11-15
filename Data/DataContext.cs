@@ -1,8 +1,7 @@
-﻿using Jul.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Jul.Entities;
 
-namespace Jul.Entities
+namespace Jul.Data
 {
     class DataContext : DbContext
     {
