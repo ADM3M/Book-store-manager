@@ -91,6 +91,7 @@ StyleCopReport.xml
 *.tli
 *.tlh
 *.tmp
+*.dtmp
 *.tmp_proj
 *_wpftmp.csproj
 *.log
@@ -476,3 +477,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+.$*.*
