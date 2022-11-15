@@ -22,7 +22,7 @@
 
         public string BookTitle { get; set; }
 
-        public DateOnly Year { get; set; }
+        public DateTime Year { get; set; }
 
         public double Price { get; set; }
     }

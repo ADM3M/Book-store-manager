@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Jul.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Jul.Entities
 {
@@ -19,12 +15,53 @@ namespace Jul.Entities
         {
         }
 
+        public DbSet<Customers> Customers { get; set; }
+
+        public DbSet<Libraries> Libraries { get; set; }
+
+        public DbSet<Books> Books { get; set; }
+
+        public DbSet<Genres> Genres { get; set; }
+
+        public DbSet<Publishers> Publishers { get; set; }
+
+        public DbSet<Authors> Authors { get; set; }
+
+        public DbSet<Receipts> Receipts { get; set; }
+
+        public DbSet<Countries> Countries { get; set; }
+
+        public DbSet<Cities> Cities { get; set; }
+
+        public DbSet<CustomerCards> CustomersCards { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["default"].ConnectionString);
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Database=LibraryDb");
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Books>()
+                .HasOne(c => c.Genre)
+                .WithMany(c => c.Books)
+                .HasForeignKey(c => c.GenreId);
+            modelBuilder.Entity<Books>()
+                .HasOne(c => c.Author)
+                .WithMany(c => c.AuthorBooks)
+                .HasForeignKey(c => c.AuthorId);
+            modelBuilder.Entity<Books>()
+                .HasOne(c => c.Publisher)
+                .WithMany(c => c.PublisherBooks)
+                .HasForeignKey(c => c.PublisherId);
+            modelBuilder.Entity<Books>()
+                .HasOne(c => c.Library)
+                .WithMany(c => c.Books)
+                .HasForeignKey(c => c.LibraryId);
         }
     }
 }
