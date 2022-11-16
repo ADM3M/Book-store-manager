@@ -16,8 +16,6 @@ namespace Jul.Data
 
         public DbSet<Customers> Customers { get; set; }
 
-        public DbSet<Libraries> Libraries { get; set; }
-
         public DbSet<Books> Books { get; set; }
 
         public DbSet<Genres> Genres { get; set; }
@@ -57,10 +55,6 @@ namespace Jul.Data
                 .HasOne(c => c.Publisher)
                 .WithMany(c => c.PublisherBooks)
                 .HasForeignKey(c => c.PublisherId);
-            modelBuilder.Entity<Books>()
-                .HasOne(c => c.Library)
-                .WithMany(c => c.Books)
-                .HasForeignKey(c => c.LibraryId);
         }
     }
 }

@@ -4,10 +4,6 @@
     {
         public int Id { get; set; }
 
-        public int LibraryId { get; set; }
-
-        public Libraries Library { get; set; }
-
         public int AuthorId { get; set; }
 
         public Authors Author { get; set; }

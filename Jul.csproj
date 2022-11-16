@@ -18,6 +18,19 @@
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="Interfaces" />
+    <Folder Include="Migrations" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Forms\CreateBookForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\SellBookForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\AddCustomerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

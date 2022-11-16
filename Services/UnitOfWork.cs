@@ -6,13 +6,16 @@ public class UnitOfWork
 {
     private static UnitOfWork? _instance = null;
 
-    public DataContext DbContext { get; set; }
+    public readonly DataContext DbContext;
+    public readonly ControlsService ControlsService;
     
     private UnitOfWork()
     {
         DbContext = new DataContext();
+        ControlsService = new ControlsService();
     }
-    
+
+
     public static UnitOfWork Create()
     {
         return _instance ??= new UnitOfWork();
