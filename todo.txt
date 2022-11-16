@@ -1,0 +1,17 @@
+Managing Libraries
+
+books view table
+opening authors page on author column click
+opening publisher page on author column click
+books price changing
+books selling
+
+maybe tabs with location (cities, country)
+
+Adding customers and their info
+Viewing customers
+viewing customer card in independent window
+
+Displaying receipts (somehow)
+
+Then need to remember that all this content is in the single library.
