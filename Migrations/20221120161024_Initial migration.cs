@@ -30,7 +30,7 @@ namespace Jul.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CityName = table.Column<int>(type: "int", nullable: false)
+                    CityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,7 +115,8 @@ namespace Jul.Migrations
                     PublisherId = table.Column<int>(type: "int", nullable: false),
                     BookTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Year = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,48 +142,28 @@ namespace Jul.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomersCards",
+                name: "Receipts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false),
-                    DateLanded = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CustomersCards", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CustomersCards_Books_BookId",
-                        column: x => x.BookId,
-                        principalTable: "Books",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CustomersCards_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Receipts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerCardId = table.Column<int>(type: "int", nullable: false),
                     DateSold = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Receipts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Receipts_CustomersCards_CustomerCardId",
-                        column: x => x.CustomerCardId,
-                        principalTable: "CustomersCards",
+                        name: "FK_Receipts_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Receipts_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -213,19 +194,14 @@ namespace Jul.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomersCards_BookId",
-                table: "CustomersCards",
+                name: "IX_Receipts_BookId",
+                table: "Receipts",
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomersCards_CustomerId",
-                table: "CustomersCards",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Receipts_CustomerCardId",
+                name: "IX_Receipts_CustomerId",
                 table: "Receipts",
-                column: "CustomerCardId");
+                column: "CustomerId");
         }
 
         /// <inheritdoc />
@@ -233,9 +209,6 @@ namespace Jul.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Receipts");
-
-            migrationBuilder.DropTable(
-                name: "CustomersCards");
 
             migrationBuilder.DropTable(
                 name: "Books");

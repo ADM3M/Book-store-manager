@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
 
-        public int CityName { get; set; }
+        public string CityName { get; set; }
     }
 }

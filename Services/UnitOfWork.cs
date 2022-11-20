@@ -8,11 +8,15 @@ public class UnitOfWork
 
     public readonly DataContext DbContext;
     public readonly ControlsService ControlsService;
+    public readonly AuthorsRepository AuthorsRepository;
+    public readonly PublishersRepository PublishersRepository;
     
     private UnitOfWork()
     {
         DbContext = new DataContext();
         ControlsService = new ControlsService();
+        AuthorsRepository = new AuthorsRepository(this);
+        PublishersRepository = new PublishersRepository(this);
     }
 
 

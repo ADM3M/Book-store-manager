@@ -53,41 +53,41 @@ namespace Jul.Data
                 await dataContext.Publishers.AddRangeAsync(publishers);
             }
 
-            if (!await dataContext.Books.AnyAsync())
-            {
-                var books = new List<Books>
-                {
-                    new Books
-                    {
-                        BookTitle = "book_title1",
-                        PublisherId = 1,
-                        AuthorId = 1,
-                        GenreId = 1,
-                        Price = 1,
-                        Year = new DateTime(DateTime.Now.Year),
-                    },
-                    new Books
-                    {
-                        BookTitle = "book_title2",
-                        PublisherId = 2,
-                        AuthorId = 2,
-                        GenreId = 2,
-                        Price = 2,
-                        Year = new DateTime(DateTime.Now.Year),
-                    },
-                    new Books
-                    {
-                        BookTitle = "book_title3",
-                        PublisherId = 3,
-                        AuthorId = 3,
-                        GenreId = 3,
-                        Price = 3,
-                        Year = new DateTime(DateTime.Now.Year),
-                    },
-                };
+            //if (!await dataContext.Books.AnyAsync())
+            //{
+            //    var books = new List<Books>
+            //    {
+            //        new Books
+            //        {
+            //            BookTitle = "book_title1",
+            //            PublisherId = 1,
+            //            AuthorId = 1,
+            //            GenreId = 1,
+            //            Price = 1,
+            //            Year = new DateTime(DateTime.Now.Year),
+            //        },
+            //        new Books
+            //        {
+            //            BookTitle = "book_title2",
+            //            PublisherId = 2,
+            //            AuthorId = 2,
+            //            GenreId = 2,
+            //            Price = 2,
+            //            Year = new DateTime(DateTime.Now.Year),
+            //        },
+            //        new Books
+            //        {
+            //            BookTitle = "book_title3",
+            //            PublisherId = 3,
+            //            AuthorId = 3,
+            //            GenreId = 3,
+            //            Price = 3,
+            //            Year = new DateTime(DateTime.Now.Year),
+            //        },
+            //    };
 
-                await dataContext.Books.AddRangeAsync(books);
-            }
+            //    await dataContext.Books.AddRangeAsync(books);
+            //}
 
             await dataContext.SaveChangesAsync();
         }

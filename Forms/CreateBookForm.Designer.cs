@@ -45,6 +45,8 @@ partial class CreateBookForm
             this.authorCombobox = new System.Windows.Forms.ComboBox();
             this.addButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.countTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // titleTextbox
@@ -151,41 +153,59 @@ partial class CreateBookForm
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(273, 275);
+            this.addButton.Location = new System.Drawing.Point(271, 312);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(103, 30);
             this.addButton.TabIndex = 4;
             this.addButton.Text = "Add";
             this.addButton.UseVisualStyleBackColor = true;
-            this.addButton.Click += new System.EventHandler(this.button1_Click);
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(118, 275);
+            this.cancelButton.Location = new System.Drawing.Point(116, 312);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(96, 30);
             this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.button1_Click);
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // countTextBox
+            // 
+            this.countTextBox.Location = new System.Drawing.Point(232, 246);
+            this.countTextBox.Name = "countTextBox";
+            this.countTextBox.Size = new System.Drawing.Size(183, 27);
+            this.countTextBox.TabIndex = 0;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(76, 249);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(48, 20);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Count";
             // 
             // CreateBookForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(493, 326);
+            this.ClientSize = new System.Drawing.Size(493, 354);
             this.ControlBox = false;
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.authorCombobox);
             this.Controls.Add(this.publisherCombobox);
             this.Controls.Add(this.genreCombobox);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.countTextBox);
             this.Controls.Add(this.priceTextBox);
             this.Controls.Add(this.yearTextbox);
             this.Controls.Add(this.titleTextbox);
@@ -215,4 +235,6 @@ partial class CreateBookForm
     private ComboBox authorCombobox;
     private Button addButton;
     private Button cancelButton;
+    private TextBox countTextBox;
+    private Label label7;
 }

@@ -10,7 +10,7 @@
 
         public int GenreId { get; set; }
 
-        public Genres Genre { get; set; }
+        public Genres Genres { get; set; }
 
         public int PublisherId { get; set; }
 
@@ -21,5 +21,7 @@
         public DateTime Year { get; set; }
 
         public double Price { get; set; }
+        
+        public int Count { get; set; }
     }
 }

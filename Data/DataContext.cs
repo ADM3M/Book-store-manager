@@ -30,8 +30,6 @@ namespace Jul.Data
 
         public DbSet<Cities> Cities { get; set; }
 
-        public DbSet<CustomerCards> CustomersCards { get; set; }
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,7 +42,7 @@ namespace Jul.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Books>()
-                .HasOne(c => c.Genre)
+                .HasOne(c => c.Genres)
                 .WithMany(c => c.Books)
                 .HasForeignKey(c => c.GenreId);
             modelBuilder.Entity<Books>()

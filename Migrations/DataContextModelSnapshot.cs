@@ -54,6 +54,9 @@ namespace Jul.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
@@ -85,8 +88,9 @@ namespace Jul.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CityName")
-                        .HasColumnType("int");
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -108,32 +112,6 @@ namespace Jul.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Jul.Entities.CustomerCards", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateLanded")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("CustomersCards");
                 });
 
             modelBuilder.Entity("Jul.Entities.Customers", b =>
@@ -209,7 +187,10 @@ namespace Jul.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerCardId")
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateSold")
@@ -217,7 +198,9 @@ namespace Jul.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerCardId");
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Receipts");
                 });
@@ -230,7 +213,7 @@ namespace Jul.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jul.Entities.Genres", "Genre")
+                    b.HasOne("Jul.Entities.Genres", "Genres")
                         .WithMany("Books")
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -244,28 +227,9 @@ namespace Jul.Migrations
 
                     b.Navigation("Author");
 
-                    b.Navigation("Genre");
+                    b.Navigation("Genres");
 
                     b.Navigation("Publisher");
-                });
-
-            modelBuilder.Entity("Jul.Entities.CustomerCards", b =>
-                {
-                    b.HasOne("Jul.Entities.Books", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Jul.Entities.Customers", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Jul.Entities.Customers", b =>
@@ -289,13 +253,21 @@ namespace Jul.Migrations
 
             modelBuilder.Entity("Jul.Entities.Receipts", b =>
                 {
-                    b.HasOne("Jul.Entities.CustomerCards", "CustomerCard")
+                    b.HasOne("Jul.Entities.Books", "Book")
                         .WithMany()
-                        .HasForeignKey("CustomerCardId")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CustomerCard");
+                    b.HasOne("Jul.Entities.Customers", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Jul.Entities.Authors", b =>

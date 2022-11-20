@@ -1,30 +1,38 @@
-using Humanizer;
-using Jul.Data;
 using Jul.Entities;
+using Jul.Extensions;
 using Jul.Forms;
 using Jul.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Intrinsics.X86;
-using System.Security.Policy;
 
 namespace Jul;
 
 public partial class Form1 : Form
 {
     private readonly UnitOfWork _uow;
-    private Dictionary<int, Books> booksMap;
+    private Dictionary<int, Books> _booksMap;
+    private Dictionary<int, Customers> _customersMap;
+    private int lastSortedColumn;
+    private bool sortAsc = true;
 
     public Form1()
     {
         InitializeComponent();
         _uow = UnitOfWork.Create();
-        appTabs.DrawItem += new DrawItemEventHandler(CustomTabRender.tabControl1_DrawItem);
+        appTabs.DrawItem += CustomTabRender.tabControl1_DrawItem;
     }
 
     private async void Form1_Load(object sender, EventArgs e)
     {
-        await Seed.SeedDataBase(_uow);
-        await InitializeBdData();
+        await DbInitializer.SeedDbAsync();
+        _booksMap = await _uow.DbContext.Books
+            .Include(e => e.Author)
+            .Include(e => e.Publisher)
+            .Include(e => e.Genres)
+            .ToDictionaryAsync(e => e.Id);
+        _customersMap = await _uow.DbContext.Customers
+            .Include(e => e.City)
+            .Include(e => e.Country)
+            .ToDictionaryAsync(e => e.Id);
 
         var booksColumns = new[]
         {
@@ -35,16 +43,20 @@ public partial class Form1 : Form
             "Year",
             "Publisher",
             "Price",
+            "Count",
         };
         await ListViewConfigure(listView1, booksColumns);
+        FillBooksListView();
 
         var customersColumns = new[]
         {
             "Id",
             "Name",
-            "Adress"
+            "Country",
+            "City",
         };
         await ListViewConfigure(listView2, customersColumns);
+        FillCustomersListView();
 
         listView1.ColumnClick += ColumnSortEventHandler;
     }
@@ -59,38 +71,14 @@ public partial class Form1 : Form
         //}
     }
 
-    private async Task InitializeBdData()
-    {
-        var books = await _uow.DbContext.Books
-            .Include(e => e.Author)
-            .Include(e => e.Publisher)
-            .Include(e => e.Genre)
-            .ToListAsync();
-
-        booksMap = books?.ToDictionary(e => e.Id);
-    }
-
     private async Task ListViewConfigure(ListView listView, string[] listViewColumns)
     {
         listView.FullRowSelect = true;
         listView.GridLines = true;
         listView.View = View.Details;
+        listView.FullRowSelect = true;
 
         RenderListViewColumns(listView, listViewColumns);
-
-        //if (booksMap is not null && booksMap.Count > 0)
-        //{
-        //    FillListView(listView);
-        //}
-
-        if (listViewColumns.Any(e => e.Contains("Author")))
-        {
-            MockBooksListView(listView1);
-        }
-        else
-        {
-            MockCustomersListView(listView2);
-        }
     }
 
     private void RenderListViewColumns(ListView listView, string[] columns)
@@ -112,61 +100,13 @@ public partial class Form1 : Form
         listView.Columns.AddRange(columnHeaders);
     }
 
-    private void MockBooksListView(ListView listView)
+    private void FillBooksListView()
     {
-        listView.Items.Clear();
-        Random random = new Random();
-        
-        var rows = ListMock.BooksName.Select(name =>
-        {
-            return new ListViewItem(
-                    new[]
-                    {
-                        random.Next(0, 20).ToString(),
-                        name,
-                        ListMock.GetRandomData(ListMock.AuthorsName),
-                        ListMock.GetRandomData(ListMock.Genres),
-                        random.Next(1980, 2022).ToString(),
-                        ListMock.GetRandomData(ListMock.PublishersName),
-                        random.Next(5, 26).ToString(),
-                    }
-                );
-        }).ToArray();
+        listView1.Items.Clear();
 
-        listView.Items.AddRange(rows);
-    }
-
-    private void MockCustomersListView(ListView listView)
-    {
-        listView.Items.Clear();
-        Random random = new Random();
-
-        var rows = ListMock.CustomerNames.Select(name =>
-        {
-            var customerAdress = ListMock.GetRandomData(ListMock.Adresses);
-            var country = ListMock.GetRandomData(ListMock.Countries);
-            var city = ListMock.GetRandomData(ListMock.Cities);
-
-            var adress = $"{customerAdress}, {city}, {country}";
-            
-            return new ListViewItem(
-                    new[]
-                    {
-                        random.Next(0, 20).ToString(),
-                        name,
-                        adress,
-                    }
-                );
-        }).ToArray();
-
-        listView.Items.AddRange(rows);
-    }
-
-    private void FillListView(ListView listView)
-    {
-        listView.Items.Clear();
-
-        var rows = booksMap.Select(entry =>
+        var rows = _booksMap
+            .Where(e => e.Value.Count > 0)
+            .Select(entry =>
             {
                 var book = entry.Value;
                 return new ListViewItem(new[]
@@ -174,136 +114,49 @@ public partial class Form1 : Form
                     book.Id.ToString(),
                     book.BookTitle,
                     book.Author.AuthorName,
-                    book.Genre.GenreName,
+                    book.Genres.GenreName,
                     book.Year.ToString(),
                     book.Publisher.PublisherName,
                     book.Price.ToString(),
+                    book.Count.ToString(),
                 });
             })
             .ToArray();
 
-        listView.Items.AddRange(rows);
+        listView1.Items.AddRange(rows);
+    }
+
+    private void FillCustomersListView()
+    {
+        listView2.Items.Clear();
+
+        var rows = _customersMap.Select(entry =>
+            {
+                var customer = entry.Value;
+                return new ListViewItem(new[]
+                {
+                    customer.Id.ToString(),
+                    customer.Name,
+                    customer.Country.CountryName,
+                    customer.City.CityName,
+                });
+            })
+            .ToArray();
+
+        listView2.Items.AddRange(rows);
     }
 
     private void toolStripButton1_Click(object sender, EventArgs e)
     {
-        var createBookForm = new CreateBookForm(listView1);
+        var createBookForm = new CreateBookForm(listView1, _booksMap, _uow);
         createBookForm.Show();
     }
 
     private void toolStripButton2_Click(object sender, EventArgs e)
     {
-        var selectedBooksId = ((IEnumerable<ListViewItem>) listView1.SelectedItems).Select(c => c.SubItems[0].Text);
-        var sellBooksForm = new SellBookForm(selectedBooksId, booksMap);
-    }
-
-    public static class ListMock
-    {
-        public static string[] AuthorsName = new[]
-        {
-            "William Shakespeare",
-            "J.R.R. Tolkien",
-            "George Orwell",
-            "Charles Dickens",
-            "Leo Tolstoy",
-            "Jane Austen",
-            "Ernest Hemingway",
-            "Homer",
-        };
-
-        public static string[] PublishersName = new[]
-        {
-            "Pearson",
-            "RELX Group",
-            "Thomson Reuters",
-            "Bertelsmann",
-            "Wolters Kluwer",
-            "Hachette Livre",
-            "Grupo Planeta",
-            "Springer Nature",
-            "Scholastic",
-        };
-
-        public static string[] BooksName = new[]
-        {
-            "ULYSSES",
-            "THE GREAT GATSBY",
-            "A PORTRAIT OF THE ARTIST AS A YOUNG MAN",
-            "LOLITA",
-            "BRAVE NEW WORLD",
-            "THE SOUND AND THE FURY",
-            "CATCH-22",
-            "DARKNESS AT NOON",
-        };
-
-        public static string[] Genres = new[]
-        {
-            "Fantasy",
-            "Science Fiction",
-            "Dystopian",
-            "Adventure",
-            "Romance",
-            "Detective & Mystery",
-            "Horror",
-            "Thriller",
-        };
-
-        public static string[] CustomerNames = new[]
-        {
-            "Liam",
-            "Noah",
-            "Oliver",
-            "Elijah",
-            "James",
-            "William",
-            "Benjamin",
-            "Lucas",
-            "Henry",
-            "Theodore",
-            "Olivia",
-            "Emma",
-            "Charlotte",
-            "Amelia",
-            "Ava",
-            "Sophia",
-            "Isabella",
-            "Mia",
-            "Evelyn",
-            "Harper",
-        };
-
-        public static string[] Adresses = new[]
-        {
-            "1510 Raver Croft Drive",
-            "3913 Thrash Trai",
-            "4852 Charack Road Jeffersonville",
-            "1661 Fannie Street Houston",
-            "2608 Atha Drive Bakersfield",
-            "4732 Mulberry Avenue",
-        };
-
-        public static string[] Cities = new[]
-        {
-            "Greeneville",
-            "Corsicana",
-            "Heber",
-        };
-
-        public static string[] Countries = new[]
-        {
-            "Tennessee(TE)",
-            "Texas(TX)",
-            "Indiana(IN)",
-            "California(CA)",
-            "Arkansas(AR)",
-        };
-
-        public static string GetRandomData(string[] source)
-        {
-            var random = new Random();
-            var index = random.Next(0, source.Length);
-            return source[index];
-        }
+        //var selectedBooksId = (listView1.SelectedItems).Select(c => c.SubItems[0].Text);
+        var sellBooksForm = new SellBookForm(listView1, _customersMap, _booksMap, _uow);
+        sellBooksForm.Show();
     }
 
     private void toolStripButton3_Click(object sender, EventArgs e)
@@ -311,4 +164,96 @@ public partial class Form1 : Form
         var addCustomerForm = new AddCustomerForm();
         addCustomerForm.Show();
     }
+
+    private void toolStripButton5_Click(object sender, EventArgs e)
+    {
+        var userId = listView2.SelectedItems[0].Text;
+        var userName = string.Empty;
+
+        foreach (ListViewItem item in listView2.Items)
+        {
+            if (item.SubItems[0].Text == userId)
+            {
+                userName = item.SubItems[1].Text;
+            }
+        }
+
+        var customerReceiptsForm = new CustomerReceiptsForm(_booksMap, userName);
+        customerReceiptsForm.Show();
+    }
+
+    private async void removeBookButton_Click(object sender, EventArgs e)
+    {
+        if (listView1.SelectedItems is null)
+        {
+            MessageBox.Show("You should select items to delete!", "Warning!", MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation);
+        }
+
+        var result = MessageBox.Show("Are you shure?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+        if (result == DialogResult.No)
+        {
+            return;
+        }
+
+        var selectedItemsId = new List<string>();
+        foreach (ListViewItem listViewSelectedItem in listView1.SelectedItems)
+        {
+            selectedItemsId.Add(listViewSelectedItem.SubItems[0].Text);
+        }
+
+        var books = selectedItemsId
+            .Select(e => _booksMap[int.Parse(e)])
+            .ToList();
+
+        _uow.DbContext.RemoveRange(books);
+        books.ForEach(e => _booksMap.Remove(e.Id));
+        listView1.BooksListViewRefresh(_booksMap);
+        await _uow.SaveChangesAsync();
+    }
+
+    private void toolStripTextBox1_TextChanged(object sender, EventArgs e)
+    {
+        var searchValue = booksSearchBar.Text;
+        var searchedBooks = _booksMap
+            .Where(b => b.Value.BookTitle.Contains(searchValue, StringComparison.CurrentCultureIgnoreCase))
+            .Select(e => e.Value)
+            .ToDictionary(e => e.Id);
+
+        listView1.BooksListViewRefresh(searchedBooks);
+    }
+
+    private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+        if (e.Column == 0)
+        {
+        }
+    }
+
+    private void SortBooksByColumn(BooksColumns column)
+    {
+        if (column == BooksColumns.Id)
+        {
+            var books = _booksMap.Select(e => e.Value);
+            books = lastSortedColumn == (int) column
+                ? books.OrderByDescending(e => e.Id)
+                : books.OrderBy(e => e.Id);
+
+            var dict = books.ToDictionary(e => e.Id);
+        }
+        
+            
+    }
+}
+
+public enum BooksColumns
+{
+    Id = 1,
+    Title,
+    Author,
+    Genre,
+    Year,
+    Publisher,
+    Price,
+    Count,
 }

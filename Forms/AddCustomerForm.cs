@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace Jul.Forms;
+﻿namespace Jul.Forms;
 
 public partial class AddCustomerForm : Form
 {

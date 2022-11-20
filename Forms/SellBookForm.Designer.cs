@@ -32,44 +32,67 @@ partial class SellBookForm
     private void InitializeComponent()
     {
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.customerComboBox = new System.Windows.Forms.ComboBox();
             this.booksListView = new System.Windows.Forms.ListView();
+            this.sellButton = new System.Windows.Forms.Button();
+            this.totalPriceLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(65, 49);
+            this.label1.Location = new System.Drawing.Point(121, 49);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(72, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Customer";
             // 
-            // comboBox1
+            // customerComboBox
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(173, 46);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(150, 28);
-            this.comboBox1.TabIndex = 1;
+            this.customerComboBox.FormattingEnabled = true;
+            this.customerComboBox.Location = new System.Drawing.Point(236, 46);
+            this.customerComboBox.Name = "customerComboBox";
+            this.customerComboBox.Size = new System.Drawing.Size(150, 28);
+            this.customerComboBox.TabIndex = 1;
             // 
             // booksListView
             // 
             this.booksListView.GridLines = true;
-            this.booksListView.Location = new System.Drawing.Point(30, 126);
+            this.booksListView.Location = new System.Drawing.Point(12, 126);
             this.booksListView.Name = "booksListView";
-            this.booksListView.Size = new System.Drawing.Size(318, 199);
+            this.booksListView.Size = new System.Drawing.Size(442, 199);
             this.booksListView.TabIndex = 2;
             this.booksListView.UseCompatibleStateImageBehavior = false;
             this.booksListView.View = System.Windows.Forms.View.Details;
+            // 
+            // sellButton
+            // 
+            this.sellButton.Location = new System.Drawing.Point(177, 364);
+            this.sellButton.Name = "sellButton";
+            this.sellButton.Size = new System.Drawing.Size(104, 34);
+            this.sellButton.TabIndex = 3;
+            this.sellButton.Text = "Sell";
+            this.sellButton.UseVisualStyleBackColor = true;
+            this.sellButton.Click += new System.EventHandler(this.sellButton_Click);
+            // 
+            // totalPriceLabel
+            // 
+            this.totalPriceLabel.AutoSize = true;
+            this.totalPriceLabel.Location = new System.Drawing.Point(337, 103);
+            this.totalPriceLabel.Name = "totalPriceLabel";
+            this.totalPriceLabel.Size = new System.Drawing.Size(49, 20);
+            this.totalPriceLabel.TabIndex = 4;
+            this.totalPriceLabel.Text = "Total: ";
             // 
             // SellBookForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(380, 423);
+            this.ClientSize = new System.Drawing.Size(466, 423);
+            this.Controls.Add(this.totalPriceLabel);
+            this.Controls.Add(this.sellButton);
             this.Controls.Add(this.booksListView);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.customerComboBox);
             this.Controls.Add(this.label1);
             this.Name = "SellBookForm";
             this.Text = "SellBookForm";
@@ -82,6 +105,8 @@ partial class SellBookForm
     #endregion
 
     private Label label1;
-    private ComboBox comboBox1;
+    private ComboBox customerComboBox;
     private ListView booksListView;
+    private Button sellButton;
+    private Label totalPriceLabel;
 }
