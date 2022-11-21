@@ -29,4 +29,24 @@ public static class ListViewExtensions
 
         listView.Items.AddRange(rows);
     }
+    
+    public static void CustomersListViewRefresh(this ListView listView, Dictionary<int, Customers> customersMap)
+    {
+        listView.Items.Clear();
+
+        var rows = customersMap.Select(entry =>
+            {
+                var customer = entry.Value;
+                return new ListViewItem(new[]
+                {
+                    customer.Id.ToString(),
+                    customer.Name,
+                    customer.Country.CountryName,
+                    customer.City.CityName,
+                });
+            })
+            .ToArray();
+
+        listView.Items.AddRange(rows);
+    }
 }

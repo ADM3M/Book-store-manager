@@ -128,8 +128,16 @@ public partial class SellBookForm : Form
 
         if (selectedCustomerName is null)
         {
-            MessageBox.Show("You should select an existing customer!", "Warnung", MessageBoxButtons.OK,
+            MessageBox.Show("You should select an existing customer!", "Warning", MessageBoxButtons.OK,
                 MessageBoxIcon.Warning);
+            return;
+        }
+
+        if (booksListView.Items.Count == 0)
+        {
+            MessageBox.Show("There are no books in the list!", "Warning", MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+            return;
         }
 
         var customer = _uow.DbContext.Customers.SingleOrDefault(e => e.Name == selectedCustomerName);

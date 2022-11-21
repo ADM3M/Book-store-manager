@@ -154,40 +154,51 @@ public partial class Form1 : Form
 
     private void toolStripButton2_Click(object sender, EventArgs e)
     {
-        //var selectedBooksId = (listView1.SelectedItems).Select(c => c.SubItems[0].Text);
+        if (listView1.SelectedItems.Count == 0)
+        {
+            MessageBox.Show("You should select books to sell", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return;
+        }
+        
         var sellBooksForm = new SellBookForm(listView1, _customersMap, _booksMap, _uow);
         sellBooksForm.Show();
     }
 
     private void toolStripButton3_Click(object sender, EventArgs e)
     {
-        var addCustomerForm = new AddCustomerForm();
-        addCustomerForm.Show();
+        var customerCreateForm = new CreateCustomerForm(listView2, _customersMap, _uow);
+        customerCreateForm.Show();
     }
 
     private void toolStripButton5_Click(object sender, EventArgs e)
     {
-        var userId = listView2.SelectedItems[0].Text;
-        var userName = string.Empty;
+        var selectedItems = listView2.SelectedItems;
 
-        foreach (ListViewItem item in listView2.Items)
+        if (selectedItems.Count == 0)
         {
-            if (item.SubItems[0].Text == userId)
-            {
-                userName = item.SubItems[1].Text;
-            }
+            MessageBox.Show("You should select a customer!", "Warning", MessageBoxButtons.OK);
+            return;
         }
 
-        var customerReceiptsForm = new CustomerReceiptsForm(_booksMap, userName);
+        var customerId = listView2.SelectedItems[0].SubItems[0].Text;
+
+        if (string.IsNullOrEmpty(customerId))
+        {
+            MessageBox.Show("customer id is null or empty", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        var customerReceiptsForm = new CustomerReceiptsForm(_booksMap, _customersMap, customerId, _uow);
         customerReceiptsForm.Show();
     }
 
     private async void removeBookButton_Click(object sender, EventArgs e)
     {
-        if (listView1.SelectedItems is null)
+        if (listView1.SelectedItems.Count == 0)
         {
             MessageBox.Show("You should select items to delete!", "Warning!", MessageBoxButtons.OK,
                 MessageBoxIcon.Exclamation);
+            return;
         }
 
         var result = MessageBox.Show("Are you shure?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
@@ -243,6 +254,48 @@ public partial class Form1 : Form
         }
         
             
+    }
+
+    private async void removeCustomersButton_Click(object sender, EventArgs e)
+    {
+        if (listView2.SelectedItems.Count == 0)
+        {
+            MessageBox.Show("You should select items to delete!", "Warning!", MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation);
+            return;
+        }
+
+        var result = MessageBox.Show("Are you shure?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+        if (result == DialogResult.No)
+        {
+            return;
+        }
+
+        var selectedItemsId = new List<string>();
+        foreach (ListViewItem listViewSelectedItem in listView2.SelectedItems)
+        {
+            selectedItemsId.Add(listViewSelectedItem.SubItems[0].Text);
+        }
+
+        var customers = selectedItemsId
+            .Select(e => _customersMap[int.Parse(e)])
+            .ToList();
+
+        _uow.DbContext.Customers.RemoveRange(customers);
+        customers.ForEach(e => _customersMap.Remove(e.Id));
+        listView2.CustomersListViewRefresh(_customersMap);
+        await _uow.SaveChangesAsync();
+    }
+
+    private void customersSearchbox_TextChanged(object sender, EventArgs e)
+    {
+        var searchValue = customersSearchbox.Text;
+        var searchedCustomers = _customersMap
+            .Where(e => e.Value.Name.Contains(searchValue, StringComparison.CurrentCultureIgnoreCase))
+            .Select(e => e.Value)
+            .ToDictionary(e => e.Id);
+
+        listView2.CustomersListViewRefresh(searchedCustomers);
     }
 }
 

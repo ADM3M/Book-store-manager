@@ -1,17 +1,23 @@
 ﻿using Jul.Entities;
+using Jul.Services;
+using Microsoft.EntityFrameworkCore;
 using static Jul.Form1;
 
 namespace Jul.Forms;
 
 public partial class CustomerReceiptsForm : Form
 {
-    private readonly string userName;
+    private readonly Dictionary<int, Customers> _customerMap;
+    private readonly string _customerId;
+    private readonly UnitOfWork _uow;
 
-    public CustomerReceiptsForm(Dictionary<int, Books> booksMap, string userName)
+    public CustomerReceiptsForm(Dictionary<int, Books> booksMap, Dictionary<int, Customers> customerMap, string CustomerId, UnitOfWork uow)
     {
+        _customerMap = customerMap;
+        _customerId = CustomerId;
+        _uow = uow;
         InitializeComponent();
         _booksMap = booksMap;
-        this.userName = userName;
     }
 
     private Dictionary<int, Books> _booksMap { get; }
@@ -27,10 +33,14 @@ public partial class CustomerReceiptsForm : Form
             "Year",
             "Publisher",
             "Price",
+            "Date sold",
         };
 
-        await ListViewConfigure(listView1, columns);
-        label1.Text = userName;
+        await ListViewConfigure(booksListView, columns);
+        FillBooksListView(booksListView);
+
+        var customerName = _customerMap[int.Parse(_customerId)].Name;
+        customerNameLabel.Text += customerName;
     }
 
     private async Task ListViewConfigure(ListView listView, string[] listViewColumns)
@@ -38,13 +48,9 @@ public partial class CustomerReceiptsForm : Form
         listView.FullRowSelect = true;
         listView.GridLines = true;
         listView.View = View.Details;
+        listView.FullRowSelect = true;
 
         RenderListViewColumns(listView, listViewColumns);
-
-        //if (booksMap is not null && booksMap.Count > 0)
-        //{
-        //    FillListView(listView);
-        //}
     }
 
     private void RenderListViewColumns(ListView listView, string[] columns)
@@ -64,5 +70,39 @@ public partial class CustomerReceiptsForm : Form
         columnHeaders.First().Width = 0;
 
         listView.Columns.AddRange(columnHeaders);
+    }
+
+    private async Task FillBooksListView(ListView listView)
+    {
+        listView.Items.Clear();
+
+        var receiptBooks = await _uow.DbContext.Receipts
+            .Where(e => e.CustomerId.ToString() == _customerId)
+            .Include(e => e.Book)
+            .ToListAsync();
+
+        var rows = receiptBooks.Select(entry =>
+            {
+                var book = entry.Book;
+                return new ListViewItem(new[]
+                {
+                    book.Id.ToString(),
+                    book.BookTitle,
+                    book.Author.AuthorName,
+                    book.Genres.GenreName,
+                    book.Year.ToString(),
+                    book.Publisher.PublisherName,
+                    book.Price.ToString(),
+                    entry.DateSold.ToString(),
+                });
+            })
+            .ToArray();
+
+        listView.Items.AddRange(rows);
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        Close();
     }
 }

@@ -32,8 +32,8 @@ partial class CustomerReceiptsForm
     private void InitializeComponent()
     {
             this.button1 = new System.Windows.Forms.Button();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.label1 = new System.Windows.Forms.Label();
+            this.booksListView = new System.Windows.Forms.ListView();
+            this.customerNameLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -44,26 +44,27 @@ partial class CustomerReceiptsForm
             this.button1.TabIndex = 0;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // listView1
+            // booksListView
             // 
-            this.listView1.FullRowSelect = true;
-            this.listView1.GridLines = true;
-            this.listView1.Location = new System.Drawing.Point(12, 92);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(470, 293);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.booksListView.FullRowSelect = true;
+            this.booksListView.GridLines = true;
+            this.booksListView.Location = new System.Drawing.Point(12, 92);
+            this.booksListView.Name = "booksListView";
+            this.booksListView.Size = new System.Drawing.Size(470, 293);
+            this.booksListView.TabIndex = 1;
+            this.booksListView.UseCompatibleStateImageBehavior = false;
+            this.booksListView.View = System.Windows.Forms.View.Details;
             // 
-            // label1
+            // customerNameLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 45);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 20);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Customer: ";
+            this.customerNameLabel.AutoSize = true;
+            this.customerNameLabel.Location = new System.Drawing.Point(12, 45);
+            this.customerNameLabel.Name = "customerNameLabel";
+            this.customerNameLabel.Size = new System.Drawing.Size(79, 20);
+            this.customerNameLabel.TabIndex = 2;
+            this.customerNameLabel.Text = "Customer: ";
             // 
             // CustomerReceiptsForm
             // 
@@ -71,8 +72,8 @@ partial class CustomerReceiptsForm
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(494, 432);
             this.ControlBox = false;
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.customerNameLabel);
+            this.Controls.Add(this.booksListView);
             this.Controls.Add(this.button1);
             this.Name = "CustomerReceiptsForm";
             this.Text = "CustomerReceiptsForm";
@@ -85,6 +86,6 @@ partial class CustomerReceiptsForm
     #endregion
 
     private Button button1;
-    private ListView listView1;
-    private Label label1;
+    private ListView booksListView;
+    private Label customerNameLabel;
 }
