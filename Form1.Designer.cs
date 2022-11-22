@@ -54,8 +54,8 @@ partial class Form1
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.removeBookButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.customersTab = new System.Windows.Forms.TabPage();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.customersSearchbox = new System.Windows.Forms.ToolStripTextBox();
@@ -129,8 +129,8 @@ partial class Form1
             this.toolStripLabel1,
             this.toolStripSeparator1,
             this.toolStripButton1,
-            this.toolStripButton2,
-            this.removeBookButton});
+            this.removeBookButton,
+            this.toolStripButton2});
             this.toolStrip1.Location = new System.Drawing.Point(3, 3);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1029, 27);
@@ -167,6 +167,17 @@ partial class Form1
             this.toolStripButton1.Text = "Add a book";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
+            // removeBookButton
+            // 
+            this.removeBookButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.removeBookButton.Image = ((System.Drawing.Image)(resources.GetObject("removeBookButton.Image")));
+            this.removeBookButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.removeBookButton.Name = "removeBookButton";
+            this.removeBookButton.Size = new System.Drawing.Size(29, 24);
+            this.removeBookButton.Text = "toolStripButton6";
+            this.removeBookButton.ToolTipText = "Remove books";
+            this.removeBookButton.Click += new System.EventHandler(this.removeBookButton_Click);
+            // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -178,17 +189,6 @@ partial class Form1
             this.toolStripButton2.Text = "toolStripButton2";
             this.toolStripButton2.ToolTipText = "Sell selected books";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
-            // 
-            // removeBookButton
-            // 
-            this.removeBookButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.removeBookButton.Image = ((System.Drawing.Image)(resources.GetObject("removeBookButton.Image")));
-            this.removeBookButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.removeBookButton.Name = "removeBookButton";
-            this.removeBookButton.Size = new System.Drawing.Size(29, 24);
-            this.removeBookButton.Text = "toolStripButton6";
-            this.removeBookButton.ToolTipText = "Remove books";
-            this.removeBookButton.Click += new System.EventHandler(this.removeBookButton_Click);
             // 
             // customersTab
             // 
@@ -263,12 +263,11 @@ partial class Form1
             // 
             // customerReceiptsButton
             // 
-            this.customerReceiptsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.customerReceiptsButton.Image = ((System.Drawing.Image)(resources.GetObject("customerReceiptsButton.Image")));
+            this.customerReceiptsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.customerReceiptsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.customerReceiptsButton.Name = "customerReceiptsButton";
-            this.customerReceiptsButton.Size = new System.Drawing.Size(29, 24);
-            this.customerReceiptsButton.Text = "toolStripButton5";
+            this.customerReceiptsButton.Size = new System.Drawing.Size(132, 24);
+            this.customerReceiptsButton.Text = "Customer receipts";
             this.customerReceiptsButton.ToolTipText = "Show customer receipts";
             this.customerReceiptsButton.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
@@ -288,6 +287,7 @@ partial class Form1
             this.listView2.Size = new System.Drawing.Size(1035, 620);
             this.listView2.TabIndex = 1;
             this.listView2.UseCompatibleStateImageBehavior = false;
+            this.listView2.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView2_ColumnClick);
             // 
             // Form1
             // 

@@ -54,7 +54,7 @@ public partial class CreateBookForm : Form
         publisherName ??= publisherCombobox.Text;
         var title = titleTextbox.Text;
         var isYearCorrect = int.TryParse(yearTextbox.Text, out int year);
-        var isPriceCorrect = double.TryParse(yearTextbox.Text, out double price);
+        var isPriceCorrect = double.TryParse(priceTextBox.Text, out double price);
         var isCountCorrect = int.TryParse(countTextBox.Text, out int count);
 
         var allFieldsCorrect = authorName != null
@@ -87,6 +87,7 @@ public partial class CreateBookForm : Form
             Author = author,
             Genres = genre,
             Publisher = publisher,
+            Price = price,
             Count = count,
             Year = new DateTime(year)
         };
@@ -107,7 +108,8 @@ public partial class CreateBookForm : Form
                         genreName,
                         year.ToString(),
                         publisherName,
-                        price.ToString()
+                        price.ToString(),
+                        count.ToString(),
                     }
                 ));
 

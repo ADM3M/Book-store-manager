@@ -19,6 +19,7 @@
     <Folder Include="Entities\" />
     <Folder Include="Interfaces" />
     <Folder Include="Migrations" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>

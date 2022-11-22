@@ -11,8 +11,10 @@ public partial class Form1 : Form
     private readonly UnitOfWork _uow;
     private Dictionary<int, Books> _booksMap;
     private Dictionary<int, Customers> _customersMap;
-    private int lastSortedColumn;
-    private bool sortAsc = true;
+    private int lastSortedBookColumn = -1;
+    private bool sortAscBook = true;
+    private int lastSortedCustomerColumn = -1;
+    private bool sortAscCustomer = true;
 
     public Form1()
     {
@@ -156,10 +158,11 @@ public partial class Form1 : Form
     {
         if (listView1.SelectedItems.Count == 0)
         {
-            MessageBox.Show("You should select books to sell", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            MessageBox.Show("You should select books to sell", "Warning", MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation);
             return;
         }
-        
+
         var sellBooksForm = new SellBookForm(listView1, _customersMap, _booksMap, _uow);
         sellBooksForm.Show();
     }
@@ -236,24 +239,100 @@ public partial class Form1 : Form
 
     private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
     {
-        if (e.Column == 0)
-        {
-        }
+        SortBooksByColumn((BooksColumns) e.Column);
     }
 
     private void SortBooksByColumn(BooksColumns column)
     {
-        if (column == BooksColumns.Id)
-        {
-            var books = _booksMap.Select(e => e.Value);
-            books = lastSortedColumn == (int) column
-                ? books.OrderByDescending(e => e.Id)
-                : books.OrderBy(e => e.Id);
+        var books = _booksMap.Select(e => e.Value);
+        SortColumnChanged((int) column, ref lastSortedBookColumn, ref sortAscBook);
 
-            var dict = books.ToDictionary(e => e.Id);
-        }
-        
+        switch (column)
+        {
+            case BooksColumns.Id:
+                books = sortAscBook ? books.OrderBy(e => e.Id)
+                    : books.OrderByDescending(e => e.Id);
+                break;
             
+            case BooksColumns.Title:
+                books = sortAscBook ? books.OrderBy(e => e.BookTitle)
+                    : books.OrderByDescending(e => e.BookTitle);
+                break;
+            
+            case BooksColumns.Author:
+                books = sortAscBook ? books.OrderBy(e => e.Author.AuthorName)
+                    : books.OrderByDescending(e => e.Author.AuthorName);
+                break;
+            
+            case BooksColumns.Genre:
+                books = sortAscBook ? books.OrderBy(e => e.Genres.GenreName)
+                    : books.OrderByDescending(e => e.Genres.GenreName);
+                break;
+            
+            case BooksColumns.Year:
+                books = sortAscBook ? books.OrderBy(e => e.Year)
+                    : books.OrderByDescending(e => e.Year);
+                break;
+            
+            case BooksColumns.Publisher:
+                books = sortAscBook ? books.OrderBy(e => e.Publisher.PublisherName)
+                    : books.OrderByDescending(e => e.Publisher.PublisherName);
+                break;
+            
+            case BooksColumns.Price:
+                books = sortAscBook ? books.OrderBy(e => e.Price)
+                    : books.OrderByDescending(e => e.Price);
+                break;
+            
+            case BooksColumns.Count:
+                books = sortAscBook ? books.OrderBy(e => e.Count)
+                    : books.OrderByDescending(e => e.Count);
+                break;
+        }
+
+        var rows = books.Select(CreateFrom)
+            .ToArray();
+
+        listView1.Items.Clear();
+        listView1.Items.AddRange(rows);
+    }
+
+    private void SortColumnChanged(int newSortColumn, ref int sortColumn, ref bool isAscending)
+    {
+        if (newSortColumn == sortColumn)
+        {
+            isAscending = !isAscending;
+            return;
+        }
+
+        sortColumn = newSortColumn;
+        isAscending = true;
+    }
+
+    private ListViewItem CreateFrom(Books book)
+    {
+        return new ListViewItem(new[]
+        {
+            book.Id.ToString(),
+            book.BookTitle,
+            book.Author.AuthorName,
+            book.Genres.GenreName,
+            book.Year.ToString(),
+            book.Publisher.PublisherName,
+            book.Price.ToString(),
+            book.Count.ToString(),
+        });
+    }
+    
+    private ListViewItem CreateFrom(Customers customer)
+    {
+        return new ListViewItem(new[]
+        {
+            customer.Id.ToString(),
+            customer.Name,
+            customer.Country.CountryName,
+            customer.City.CityName,
+        });
     }
 
     private async void removeCustomersButton_Click(object sender, EventArgs e)
@@ -297,11 +376,51 @@ public partial class Form1 : Form
 
         listView2.CustomersListViewRefresh(searchedCustomers);
     }
+
+    private void listView2_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+        SortCustomersByColumn((CustomersColumns)e.Column);
+    }
+    
+    private void SortCustomersByColumn(CustomersColumns column)
+    {
+        var customers = _customersMap.Select(e => e.Value);
+        SortColumnChanged((int) column, ref lastSortedCustomerColumn, ref sortAscCustomer);
+
+        switch (column)
+        {
+            case CustomersColumns.Id:
+                customers = sortAscCustomer ? customers.OrderBy(e => e.Id)
+                    : customers.OrderByDescending(e => e.Id);
+                break;
+                
+            case CustomersColumns.Name:
+                customers = sortAscCustomer ? customers.OrderBy(e => e.Name)
+                    : customers.OrderByDescending(e => e.Name);
+                break;
+                
+            case CustomersColumns.Country:
+                customers = sortAscCustomer ? customers.OrderBy(e => e.Country.CountryName)
+                    : customers.OrderByDescending(e => e.Country.CountryName);
+                break;
+                
+            case CustomersColumns.City:
+                customers = sortAscCustomer ? customers.OrderBy(e => e.City.CityName)
+                    : customers.OrderByDescending(e => e.City.CityName);
+                break;
+        }
+
+        var rows = customers.Select(CreateFrom)
+            .ToArray();
+
+        listView2.Items.Clear();
+        listView2.Items.AddRange(rows);
+    }
 }
 
 public enum BooksColumns
 {
-    Id = 1,
+    Id,
     Title,
     Author,
     Genre,
@@ -309,4 +428,12 @@ public enum BooksColumns
     Publisher,
     Price,
     Count,
+}
+
+public enum CustomersColumns
+{
+    Id,
+    Name,
+    Country,
+    City,
 }
